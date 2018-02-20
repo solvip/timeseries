@@ -118,6 +118,13 @@ func (t Timeseries) Difference() (ret Timeseries) {
 	return ret
 }
 
+func makeTimeseries(length int) Timeseries {
+	return Timeseries{
+		Xs: make([]float64, length),
+		Ys: make([]float64, length),
+	}
+}
+
 // Slice slices the Timeseries equivalently to t[start:end]
 func (t Timeseries) Slice(start, end int) Timeseries {
 	if len(t.Xs) != len(t.Ys) {
@@ -127,13 +134,6 @@ func (t Timeseries) Slice(start, end int) Timeseries {
 	return Timeseries{
 		Xs: t.Xs[start:end],
 		Ys: t.Ys[start:end],
-	}
-}
-
-func makeTimeseries(length int) Timeseries {
-	return Timeseries{
-		Xs: make([]float64, length),
-		Ys: make([]float64, length),
 	}
 }
 
