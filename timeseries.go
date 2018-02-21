@@ -28,8 +28,7 @@ func (t Timeseries) First() (x, y float64) {
 }
 
 // Last - Return the last x, y value of the timeseries.
-// If the timeseries contains no items, Last() returns the zero value.
-// XXX: Should this panic?
+// If the timeseries contains no items, Last() panics.
 func (t Timeseries) Last() (x, y float64) {
 	n := t.Len()
 	if n == 0 {
