@@ -17,6 +17,28 @@ type Timeseries struct {
 	Ys []float64
 }
 
+// First - Return the first x, y value of the timeseries.
+// If the timeseries contains no items, First() panics.
+func (t Timeseries) First() (x, y float64) {
+	if t.Len() == 0 {
+		panic("timeseries: empty timeseries")
+	}
+
+	return t.Xs[0], t.Ys[0]
+}
+
+// Last - Return the last x, y value of the timeseries.
+// If the timeseries contains no items, Last() returns the zero value.
+// XXX: Should this panic?
+func (t Timeseries) Last() (x, y float64) {
+	n := t.Len()
+	if n == 0 {
+		panic("timeseries: empty timeseries")
+	}
+
+	return t.Xs[n-1], t.Ys[n-1]
+}
+
 // Equal - Return true if t and other represent the same time series
 func (t Timeseries) Equal(other Timeseries) bool {
 	if len(t.Xs) != len(t.Ys) || len(other.Xs) != len(other.Ys) {

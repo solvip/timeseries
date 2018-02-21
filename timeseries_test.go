@@ -123,3 +123,65 @@ func TestDifference(t *testing.T) {
 		t.Fatalf("expected ts.Difference() to return %v; instead got %v", expected, actual)
 	}
 }
+
+func TestSimpleLinearRegression(t *testing.T) {
+	// Ensure that a diagonal results in a perfect fit
+	ts1 := Timeseries{
+		Xs: []float64{0, 1, 2, 3, 4, 5},
+		Ys: []float64{0, 10, 20, 30, 40, 50},
+	}
+
+	if alpha, beta, rmse := ts1.SimpleLinearRegression(); alpha != 0 || beta != 10 || rmse != 0 {
+		t.Fatalf("Expected alpha=0, beta=1, rmse=0, instead got alpha=%v, beta=%v, rmse=%v",
+			alpha, beta, rmse)
+	}
+
+	// Ensure that a line results in a perfect fit
+	ts2 := Timeseries{
+		Xs: []float64{0, 1, 2, 3, 4},
+		Ys: []float64{5, 5, 5, 5, 5},
+	}
+
+	if alpha, beta, rmse := ts2.SimpleLinearRegression(); alpha != 5 || beta != 0 || rmse != 0 {
+		t.Fatalf("Expected alpha=5, beta=0, rmse=0, instead got alpha=%v, beta=%v, rmse=%v",
+			alpha, beta, rmse)
+	}
+}
+
+func TestFirstLast(t *testing.T) {
+	assertPanic(t, "timeseries: empty timeseries", func() { emptyTimeseries.First() })
+	assertPanic(t, "timeseries: empty timeseries", func() { emptyTimeseries.Last() })
+
+	ts1 := Timeseries{
+		Xs: []float64{0, 1, 2, 3, 4, 5},
+		Ys: []float64{0, 10, 20, 30, 40, 50},
+	}
+
+	expectedFirstX, expectedFirstY := 0.0, 0.0
+	expectedLastX, expectedLastY := 5.0, 50.0
+
+	if x, y := ts1.First(); x != expectedFirstX || y != expectedFirstY {
+		t.Fatalf("expected First() = %v, %v, instead got %v, %v", expectedFirstX, expectedFirstY, x, y)
+	}
+
+	if x, y := ts1.Last(); x != expectedLastX || y != expectedLastY {
+		t.Fatalf("expected Last() = %v, %v, instead got %v, %v", expectedLastX, expectedLastY, x, y)
+	}
+
+}
+
+// assertPanic - Assert that f panics with expectedPanicMsg
+func assertPanic(t *testing.T, expectedPanicMsg string, f func()) {
+	t.Helper()
+
+	recoverHandler := func() {
+		if r := recover(); r == nil {
+			t.Errorf("f did not panic as expected")
+		} else if r != expectedPanicMsg {
+			t.Errorf("expected panic(%s); instead got panic(%s)", expectedPanicMsg, r)
+		}
+	}
+
+	defer recoverHandler()
+	f()
+}
