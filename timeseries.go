@@ -33,14 +33,14 @@ func (t Timeseries) Equal(other Timeseries) bool {
 	return true
 }
 
-// After - Return a shallow copy of the items in the time series having Time >= instant
+// After - Return a shallow copy of the items in the time series having Xs >= x
 // The series must be sorted.
-func (t Timeseries) After(y float64) Timeseries {
+func (t Timeseries) After(x float64) Timeseries {
 	if len(t.Xs) != len(t.Ys) {
 		panic("timeseries: Xs and Ys length mismatch")
 	}
 
-	if i := t.findPivot(y); i == t.Len() {
+	if i := t.findPivot(x); i == t.Len() {
 		// After is older than all the items in the series
 		return Timeseries{}
 	} else {
@@ -51,14 +51,14 @@ func (t Timeseries) After(y float64) Timeseries {
 	}
 }
 
-// Before - Return a shallow copy of the items in the time series having Time < instant.
+// Before - Return a shallow copy of the items in the time series having Xs < x.
 // The series must be sorted.
-func (t Timeseries) Before(y float64) Timeseries {
+func (t Timeseries) Before(x float64) Timeseries {
 	if len(t.Xs) != len(t.Ys) {
 		panic("timeseries: Xs and Ys length mismatch")
 	}
 
-	if j := t.findPivot(y); j == t.Len() {
+	if j := t.findPivot(x); j == t.Len() {
 		return t
 	} else {
 		return Timeseries{
@@ -68,20 +68,20 @@ func (t Timeseries) Before(y float64) Timeseries {
 	}
 }
 
-// Between - Return a shallow copy of the items in the time series between [y1, y2)
-func (t Timeseries) Between(y1, y2 float64) Timeseries {
+// Between - Return a shallow copy of the items in the time series between [x1, x2)
+func (t Timeseries) Between(x1, x2 float64) Timeseries {
 	if len(t.Xs) != len(t.Ys) {
 		panic("timeseries: Xs and Ys length mismatch")
 	}
 
-	return t.After(y1).Before(y2)
+	return t.After(x1).Before(x2)
 }
 
-// findPivot - Binary search for the location of y in t and return its index,
-// where the index will put i at before <= y < after
-func (t Timeseries) findPivot(y float64) int {
+// findPivot - Binary search for the location of x in t and return its index,
+// where the index will put i at before <= x < after
+func (t Timeseries) findPivot(x float64) int {
 	findAfter := func(i int) bool {
-		return t.Ys[i] >= y
+		return t.Xs[i] >= x
 	}
 
 	return sort.Search(t.Len(), findAfter)
@@ -111,8 +111,8 @@ func (t Timeseries) Difference() (ret Timeseries) {
 
 	ret = makeTimeseries(t.Len() - 1)
 	for i := 0; i < ret.Len(); i++ {
-		ret.Xs[i] = t.Xs[i+1] - t.Xs[i]
-		ret.Ys[i] = t.Ys[i+1]
+		ret.Ys[i] = t.Ys[i+1] - t.Ys[i]
+		ret.Xs[i] = t.Xs[i+1]
 	}
 
 	return ret
@@ -158,5 +158,5 @@ func (t Timeseries) Swap(i, j int) {
 	t.Ys[i], t.Ys[j] = t.Ys[j], t.Ys[i]
 }
 func (t Timeseries) Less(i, j int) bool {
-	return t.Ys[i] < t.Ys[j]
+	return t.Xs[i] < t.Xs[j]
 }

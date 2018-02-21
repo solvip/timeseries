@@ -6,13 +6,13 @@ import (
 )
 
 var emptyTimeseries = Timeseries{}
-var minY = math.Inf(-1)
-var maxY = math.Inf(1)
+var minX = math.Inf(-1)
+var maxX = math.Inf(1)
 
 func TestAppend(t *testing.T) {
 	expected := Timeseries{
-		Xs: []float64{123.4, 456.7},
-		Ys: []float64{1, 2},
+		Xs: []float64{1, 2},
+		Ys: []float64{123.4, 456.7},
 	}
 
 	var actual Timeseries
@@ -26,77 +26,76 @@ func TestAppend(t *testing.T) {
 
 func TestAfter(t *testing.T) {
 	ts := Timeseries{
-		Xs: []float64{100.0, 50.0, 100.0},
-		Ys: []float64{1, 2, 3},
+		Xs: []float64{1, 2, 3},
+		Ys: []float64{100.0, 50.0, 100.0},
 	}
 
-	if x := emptyTimeseries.After(minY); !x.Equal(emptyTimeseries) {
-		t.Fatalf("expected emptyTimeseries.After(minY) to return empty series; instead got %v", x)
+	if actual := emptyTimeseries.After(minX); !actual.Equal(emptyTimeseries) {
+		t.Fatalf("expected emptyTimeseries.After(minX) to return empty series; instead got %v", actual)
 	}
 
-	if x := ts.After(maxY); !x.Equal(emptyTimeseries) {
-		t.Fatalf("expected no items in time series after maximum y, instead got: %v", x)
+	if actual := ts.After(maxX); !actual.Equal(emptyTimeseries) {
+		t.Fatalf("expected no items in time series after maximum y, instead got: %v", actual)
 	}
 
-	if x := ts.After(0); !ts.Equal(ts) {
-		t.Fatalf("expected ts.After(0) to return ts; instead got: %v", x)
+	if actual := ts.After(0); !ts.Equal(ts) {
+		t.Fatalf("expected ts.After(0) to return ts; instead got: %v", actual)
 	}
 
 	// After is inclusive
 	expected := ts.Slice(1, ts.Len())
-	if x := ts.After(2); !x.Equal(expected) {
-		t.Fatalf("expected ts.After(2) to return %v; instead got %v", expected, x)
+	if actual := ts.After(2); !actual.Equal(expected) {
+		t.Fatalf("expected ts.After(2) to return %v; instead got %v", expected, actual)
 	}
 }
 
 func TestBefore(t *testing.T) {
 	ts := Timeseries{
-		Xs: []float64{100.0, 50.0, 100.0},
-		Ys: []float64{1, 2, 3},
+		Xs: []float64{1, 2, 3},
+		Ys: []float64{100.0, 50.0, 100.0},
 	}
 
 	if x := emptyTimeseries.Before(math.Inf(-1)); !x.Equal(emptyTimeseries) {
 		t.Fatalf("expected nil to be returned on emptyTimeseries.Before(maxTime); instead got %v", x)
 	}
 
-	if x := ts.Before(minY); !x.Equal(emptyTimeseries) {
+	if x := ts.Before(minX); !x.Equal(emptyTimeseries) {
 		t.Fatalf("expected no items in time series before zero time, instead got %v", x)
 	}
 
-	if x := ts.Before(maxY); !x.Equal(ts) {
+	if x := ts.Before(maxX); !x.Equal(ts) {
 		t.Fatalf("expected ts.Before(maxTime) to return ts; instead got: %v", x)
 	}
 
 	// Before is exclusive
 	expected := ts.Slice(0, 2)
-	if x := ts.Before(ts.Ys[2]); !x.Equal(expected) {
-		t.Fatalf("expected ts.Before(%v) to return %v; instead got %v", ts.Ys[2], expected, x)
+	if actual := ts.Before(ts.Xs[2]); !actual.Equal(expected) {
+		t.Fatalf("expected ts.Before(%v) to return %v; instead got %v", ts.Xs[2], expected, actual)
 	}
 }
 
 func TestBetween(t *testing.T) {
 	ts := Timeseries{
-		Xs: []float64{100.0, 50.0, 100.0},
-		Ys: []float64{1, 2, 3},
+		Xs: []float64{1, 2, 3},
+		Ys: []float64{100.0, 50.0, 100.0},
 	}
 
-	if x := ts.Between(minY, minY); !x.Equal(emptyTimeseries) {
-		t.Fatalf("expected ts.Between(minY, minY) to return empty; instead got %v", x)
+	if actual := ts.Between(minX, minX); !actual.Equal(emptyTimeseries) {
+		t.Fatalf("expected ts.Between(minX, minX) to return empty; instead got %v", actual)
 	}
 
 	// We return in the range [from, to).  We should only get the first two elements.
 	firstTwo := ts.Slice(0, 2)
-	if x := ts.Between(minY, ts.Ys[2]); !x.Equal(firstTwo) {
-		t.Fatalf("expected ts.Between(minY, %v) to return %v; instead got %v", ts.Ys[2], firstTwo, x)
+	if x := ts.Between(minX, ts.Xs[2]); !x.Equal(firstTwo) {
+		t.Fatalf("expected ts.Between(minX, %v) to return %v; instead got %v", ts.Xs[2], firstTwo, x)
 	}
 
 	// we return in the range [from, to).  Ensure that we only get the middle
 	// element
-	y1 := ts.Ys[1]
-	y2 := ts.Ys[2]
+	x1, x2 := ts.Xs[1], ts.Xs[2]
 	middle := ts.Slice(1, 2)
-	if x := ts.Between(y1, y2); !x.Equal(middle) {
-		t.Fatalf("expected ts.Between(%v, %v) to return %v; instead got %v", y1, y2, middle, x)
+	if actual := ts.Between(x1, x2); !actual.Equal(middle) {
+		t.Fatalf("expected ts.Between(%v, %v) to return %v; instead got %v", x1, x2, middle, actual)
 	}
 }
 
@@ -106,8 +105,8 @@ func TestDifference(t *testing.T) {
 	}
 
 	ts := Timeseries{
-		Xs: []float64{100.0, 50.0, 100.0},
-		Ys: []float64{1, 2, 3},
+		Xs: []float64{1, 2, 3},
+		Ys: []float64{100.0, 50.0, 100.0},
 	}
 
 	if x := ts.Slice(1, 2).Difference(); !x.Equal(emptyTimeseries) {
@@ -116,8 +115,8 @@ func TestDifference(t *testing.T) {
 
 	actual := ts.Difference()
 	expected := Timeseries{
-		Xs: []float64{-50.0, 50.0},
-		Ys: []float64{2, 3},
+		Xs: []float64{2, 3},
+		Ys: []float64{-50.0, 50.0},
 	}
 
 	if !actual.Equal(expected) {
