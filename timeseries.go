@@ -6,7 +6,10 @@
 package timeseries
 
 import (
+	"math"
 	"sort"
+
+	"gonum.org/v1/gonum/stat"
 )
 
 type Timeseries struct {
@@ -116,6 +119,56 @@ func (t Timeseries) Difference() (ret Timeseries) {
 	}
 
 	return ret
+}
+
+// SimpleLinearRegression performs a simple linear regression of the series
+// computing the best fit line
+//  y = alpha + beta*x
+// such that rmse is minimized
+func (t Timeseries) SimpleLinearRegression() (alpha, beta, rmse float64) {
+	if len(t.Xs) != len(t.Ys) {
+		panic("timeseries: Xs and Ys slice length mismatch")
+	}
+
+	alpha, beta = stat.LinearRegression(t.Xs, t.Ys, nil, false)
+	rmse = math.Sqrt(MeanSquaredError(t.Xs, t.Ys, nil, alpha, beta))
+
+	return alpha, beta, rmse
+}
+
+// MeanSquaredError returns the mean squared error defined as
+//  MSE = \sum_i w[i] * (y[i] - alpha + beta*x[i])^2 / (sum_i w_i)
+// for the line
+//  y = alpha + beta*x
+// and the data in x and y with the given weights.
+//
+// The lengths of x and y must be equal. If weights is nil then all of the
+// weights are 1. If weights is not nil, then len(x) must equal len(weights).
+//
+// TODO: Submit a PR to gonum
+func MeanSquaredError(x, y, weights []float64, alpha, beta float64) (mse float64) {
+	if len(x) != len(y) {
+		panic("stat: slice length mismatch")
+	}
+	if weights != nil && len(weights) != len(x) {
+		panic("stat: slice length mismatch")
+	}
+
+	sumWeights := 0.0
+	w := 1.0
+	for i, xi := range x {
+		if weights != nil {
+			w = weights[i]
+		}
+
+		yi := y[i]
+		fi := alpha + beta*xi
+		d := fi - yi
+		mse += w * d * d
+		sumWeights += w
+	}
+
+	return mse / sumWeights
 }
 
 func makeTimeseries(length int) Timeseries {
