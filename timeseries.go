@@ -225,6 +225,8 @@ func (t Timeseries) Sort() {
 	sort.Sort(t)
 }
 
+// Len - return the lenght of the timeseries.
+// If len(Timeseries.Xs) != len(Timeseries.Ys), Len() panics
 func (t Timeseries) Len() int {
 	if n := len(t.Xs); n != len(t.Ys) {
 		panic("timeseries: Xs and Ys slice length mismatch")
@@ -237,6 +239,7 @@ func (t Timeseries) Swap(i, j int) {
 	t.Xs[i], t.Xs[j] = t.Xs[j], t.Xs[i]
 	t.Ys[i], t.Ys[j] = t.Ys[j], t.Ys[i]
 }
+
 func (t Timeseries) Less(i, j int) bool {
 	return t.Xs[i] < t.Xs[j]
 }

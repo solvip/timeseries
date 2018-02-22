@@ -170,6 +170,25 @@ func TestFirstLast(t *testing.T) {
 
 }
 
+func TestLen(t *testing.T) {
+	assertPanic(t, "timeseries: Xs and Ys slice length mismatch", func() {
+		ts := Timeseries{Xs: []float64{1}, Ys: []float64{1, 2}}
+		ts.Len()
+	})
+
+	if n := emptyTimeseries.Len(); n != 0 {
+		t.Fatalf("expected Len() = 0, instead got %v", n)
+	}
+
+	ts := Timeseries{
+		Xs: []float64{1},
+		Ys: []float64{2},
+	}
+	if n := ts.Len(); n != 1 {
+		t.Fatalf("expected Len() = 1, instead got %v", n)
+	}
+}
+
 // assertPanic - Assert that f panics with expectedPanicMsg
 func assertPanic(t *testing.T, expectedPanicMsg string, f func()) {
 	t.Helper()
