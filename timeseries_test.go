@@ -124,14 +124,14 @@ func TestDifference(t *testing.T) {
 	}
 }
 
-func TestSimpleLinearRegression(t *testing.T) {
+func TestLinearRegression(t *testing.T) {
 	// Ensure that a diagonal results in a perfect fit
 	ts1 := Timeseries{
 		Xs: []float64{0, 1, 2, 3, 4, 5},
 		Ys: []float64{0, 10, 20, 30, 40, 50},
 	}
 
-	if alpha, beta, rmse := ts1.SimpleLinearRegression(); alpha != 0 || beta != 10 || rmse != 0 {
+	if alpha, beta, rmse := ts1.LinearRegression(); alpha != 0 || beta != 10 || rmse != 0 {
 		t.Fatalf("Expected alpha=0, beta=1, rmse=0, instead got alpha=%v, beta=%v, rmse=%v",
 			alpha, beta, rmse)
 	}
@@ -142,7 +142,7 @@ func TestSimpleLinearRegression(t *testing.T) {
 		Ys: []float64{5, 5, 5, 5, 5},
 	}
 
-	if alpha, beta, rmse := ts2.SimpleLinearRegression(); alpha != 5 || beta != 0 || rmse != 0 {
+	if alpha, beta, rmse := ts2.LinearRegression(); alpha != 5 || beta != 0 || rmse != 0 {
 		t.Fatalf("Expected alpha=5, beta=0, rmse=0, instead got alpha=%v, beta=%v, rmse=%v",
 			alpha, beta, rmse)
 	}

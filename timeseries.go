@@ -152,7 +152,7 @@ func (t Timeseries) Difference() (ret Timeseries) {
 // computing the best fit line
 //  y = alpha + beta*x
 // such that rmse is minimized
-func (t Timeseries) SimpleLinearRegression() (alpha, beta, rmse float64) {
+func (t Timeseries) LinearRegression() (alpha, beta, rmse float64) {
 	if len(t.Xs) != len(t.Ys) {
 		panic("timeseries: Xs and Ys slice length mismatch")
 	}
