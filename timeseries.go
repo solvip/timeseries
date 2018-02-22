@@ -158,7 +158,7 @@ func (t Timeseries) SimpleLinearRegression() (alpha, beta, rmse float64) {
 	}
 
 	alpha, beta = stat.LinearRegression(t.Xs, t.Ys, nil, false)
-	rmse = math.Sqrt(MeanSquaredError(t.Xs, t.Ys, nil, alpha, beta))
+	rmse = math.Sqrt(meanSquaredError(t.Xs, t.Ys, nil, alpha, beta))
 
 	return alpha, beta, rmse
 }
@@ -173,7 +173,7 @@ func (t Timeseries) SimpleLinearRegression() (alpha, beta, rmse float64) {
 // weights are 1. If weights is not nil, then len(x) must equal len(weights).
 //
 // TODO: Submit a PR to gonum
-func MeanSquaredError(x, y, weights []float64, alpha, beta float64) (mse float64) {
+func meanSquaredError(x, y, weights []float64, alpha, beta float64) (mse float64) {
 	if len(x) != len(y) {
 		panic("stat: slice length mismatch")
 	}
