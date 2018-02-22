@@ -1,8 +1,14 @@
 // Package timeseries provides utilities to manipulate and analyze timeseries data.
 // For compatability with Gonum, a Timeseries is simply a pair of float64 slices,
-// the X and the Y axis.
-// You can manipulate them as you wish, but ensure that you call Sort() if you're
-// not appending data points in sorted order.
+// representing the X and the Y axis.
+// You can manipulate them as you wish, but ensure two things:
+//
+// - Many of the methods in this library assume that the data is sorted.  If you
+//   do not insert in sorted order, ensure that you call Sort()
+//
+// - Ensure that Timeseries.Xs and Timeseries.Ys is always of equal length
+//   if you manipulate them without the accessors provided
+//
 package timeseries
 
 import (
