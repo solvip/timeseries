@@ -205,6 +205,36 @@ func makeTimeseries(length int) Timeseries {
 	}
 }
 
+// MovingAverage returns a time series representing the window-sized moving average over t
+func (t Timeseries) MovingAverage(window int) (ret Timeseries) {
+	if len(t.Xs) != len(t.Ys) {
+		panic("timeseries: Xs and Ys slice length mismatch")
+	}
+
+	if t.Len() < window {
+		// If the length of t is less than window, we cannot return anything useul
+		return Timeseries{}
+	}
+
+	var movingSum float64
+
+	// Run the average
+	for i, x := range t.Xs {
+		movingSum += t.Ys[i]
+		if i >= window {
+			// We have a full window; start removing old entries
+			movingSum -= t.Ys[i-window]
+		} else if i < window-1 {
+			// Still accumulating a window
+			continue
+		}
+
+		ret.Append(x, movingSum/float64(window))
+	}
+
+	return ret
+}
+
 // Slice slices the Timeseries equivalently to t[start:end]
 func (t Timeseries) Slice(start, end int) Timeseries {
 	if len(t.Xs) != len(t.Ys) {

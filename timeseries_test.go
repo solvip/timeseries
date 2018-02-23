@@ -6,6 +6,10 @@ import (
 )
 
 var emptyTimeseries = Timeseries{}
+var mismatchedTimeseries = Timeseries{
+	Xs: []float64{1, 2, 3, 4},
+	Ys: []float64{5, 6},
+}
 var minX = math.Inf(-1)
 var maxX = math.Inf(1)
 
@@ -170,10 +174,52 @@ func TestFirstLast(t *testing.T) {
 
 }
 
+func TestMovingAverage(t *testing.T) {
+	assertPanic(t, "timeseries: Xs and Ys slice length mismatch", func() {
+		mismatchedTimeseries.MovingAverage(10)
+	})
+
+	// A moving average with a window size 1 should be the identity
+	ts1 := Timeseries{
+		Xs: []float64{1, 2, 3, 4, 5, 6},
+		Ys: []float64{1, 2, 4, 8, 16, 32},
+	}
+
+	if actual := ts1.MovingAverage(1); !actual.Equal(ts1) {
+		t.Fatalf("expected MovingAverage(1) to be the identity of ts1; instead got %v", actual)
+	}
+
+	expectedForMA2 := Timeseries{
+		Xs: []float64{2, 3, 4, 5, 6},
+		Ys: []float64{
+			(1.0 + 2.0) / 2,
+			(2.0 + 4.0) / 2,
+			(4.0 + 8.0) / 2,
+			(8.0 + 16.0) / 2,
+			(16.0 + 32.0) / 2,
+		},
+	}
+	if actual := ts1.MovingAverage(2); !actual.Equal(expectedForMA2) {
+		t.Fatalf("expected MovingAverage(2) to return %v; instead got %v", expectedForMA2, actual)
+	}
+
+	expectedForMA4 := Timeseries{
+		Xs: []float64{4, 5, 6},
+		Ys: []float64{
+			(1.0 + 2.0 + 4.0 + 8.0) / 4,
+			(2.0 + 4.0 + 8.0 + 16.0) / 4,
+			(4.0 + 8.0 + 16.0 + 32.0) / 4,
+		},
+	}
+	if actual := ts1.MovingAverage(4); !actual.Equal(expectedForMA4) {
+		t.Fatalf("expected MovingAverage(4) to return %v; instead got %v", expectedForMA4, actual)
+	}
+
+}
+
 func TestLen(t *testing.T) {
 	assertPanic(t, "timeseries: Xs and Ys slice length mismatch", func() {
-		ts := Timeseries{Xs: []float64{1}, Ys: []float64{1, 2}}
-		ts.Len()
+		mismatchedTimeseries.Len()
 	})
 
 	if n := emptyTimeseries.Len(); n != 0 {
