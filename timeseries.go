@@ -77,7 +77,7 @@ func (t Timeseries) After(x float64) Timeseries {
 	}
 
 	if i := t.findPivot(x); i == t.Len() {
-		// After is older than all the items in the series
+		// After is newer than all the items in the series
 		return Timeseries{}
 	} else {
 		return Timeseries{
