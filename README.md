@@ -1,6 +1,8 @@
 timeseries
 ==========
 
+[![Build Status](https://travis-ci.org/solvip/timeseries.svg?branch=master)](https://travis-ci.org/solvip/timeseries)
+
 Package timeseries provides utilities to manipulate and analyze timeseries data.
 For compatability with Gonum, a Timeseries is simply a pair of float64 slices,
 representing the X and the Y axis.
