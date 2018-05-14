@@ -11,3 +11,10 @@ You can manipulate them as you wish, but ensure two things:
   
 - Ensure that Timeseries.Xs and Timeseries.Ys is always of equal length
   if you manipulate them without the accessors provided.  Violating this constraint will result in pancis.
+
+At the time of this writing(May, 2018), please do not assume API stability.
+
+# License
+
+timeseries is licensed under MIT.  See [LICENSE](LICENSE)
+
