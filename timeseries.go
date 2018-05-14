@@ -26,22 +26,28 @@ type Timeseries struct {
 // First - Return the first x, y value of the timeseries.
 // If the timeseries contains no items, First() panics.
 func (t Timeseries) First() (x, y float64) {
-	if t.Len() == 0 {
-		panic("timeseries: empty timeseries")
-	}
-
-	return t.Xs[0], t.Ys[0]
+	return t.At(0)
 }
 
 // Last - Return the last x, y value of the timeseries.
 // If the timeseries contains no items, Last() panics.
 func (t Timeseries) Last() (x, y float64) {
+	return t.At(t.Len() - 1)
+}
+
+// At - return the x, y pair at index i
+// If i does not represent a valid index, At panics
+func (t Timeseries) At(i int) (x, y float64) {
 	n := t.Len()
 	if n == 0 {
 		panic("timeseries: empty timeseries")
 	}
 
-	return t.Xs[n-1], t.Ys[n-1]
+	if i >= n || i < 0 {
+		panic("timeseries: out of bounds")
+	}
+
+	return t.Xs[i], t.Ys[i]
 }
 
 // Equal - Return true if t and other represent the same time series

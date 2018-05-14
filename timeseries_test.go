@@ -152,6 +152,20 @@ func TestLinearRegression(t *testing.T) {
 	}
 }
 
+func TestAt(t *testing.T) {
+	ts := Timeseries{
+		Xs: []float64{0, 1, 2, 3, 4, 5},
+		Ys: []float64{0, 10, 20, 30, 40, 50},
+	}
+
+	assertPanic(t, "timeseries: empty timeseries", func() { emptyTimeseries.At(0) })
+	assertPanic(t, "timeseries: out of bounds", func() { ts.At(1337) })
+
+	if x, y := ts.At(3); x != 3 || y != 30 {
+		t.Fatalf("expected ts.At(3) = 3, 30; instead got %v, %v", x, y)
+	}
+}
+
 func TestFirstLast(t *testing.T) {
 	assertPanic(t, "timeseries: empty timeseries", func() { emptyTimeseries.First() })
 	assertPanic(t, "timeseries: empty timeseries", func() { emptyTimeseries.Last() })
