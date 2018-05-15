@@ -53,7 +53,14 @@ func TestEqual(t *testing.T) {
 		t.Fatalf("expected ts2 to be equal to ts1")
 	}
 
+	// Test the case where ts1 and ts2 are of non-equal length
 	ts1.Append(3, 4)
+	if ts1.Equal(ts2) {
+		t.Fatalf("ts1 should not be equal to ts2")
+	}
+
+	// Test the case where ts1 and ts2 are of equal lenght; but different
+	ts2.Append(4, 3)
 	if ts1.Equal(ts2) {
 		t.Fatalf("ts1 should not be equal to ts2")
 	}
