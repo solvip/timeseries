@@ -107,7 +107,7 @@ func (t Timeseries) Before(x float64) Timeseries {
 // Between - Return a shallow copy of the items in the time series between [x1, x2)
 func (t Timeseries) Between(x1, x2 float64) Timeseries {
 	if len(t.Xs) != len(t.Ys) {
-		panic("timeseries: Xs and Ys length mismatch")
+		panic("timeseries: Xs and Ys slice length mismatch")
 	}
 
 	return t.After(x1).Before(x2)
