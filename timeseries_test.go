@@ -158,6 +158,10 @@ func TestBetween(t *testing.T) {
 }
 
 func TestDifference(t *testing.T) {
+	assertPanic(t, "timeseries: Xs and Ys slice length mismatch", func() {
+		mismatchedTimeseries.Difference()
+	})
+
 	if x := emptyTimeseries.Difference(); !x.Equal(emptyTimeseries) {
 		t.Fatalf("expected difference of empty series to return empty series; instead got %v", x)
 	}
