@@ -29,11 +29,11 @@ func TestAppend(t *testing.T) {
 }
 
 func TestEqual(t *testing.T) {
-	assertPanic(t, "timeseries: Xs and Ys length mismatch", func() {
+	assertPanic(t, "timeseries: Xs and Ys slice length mismatch", func() {
 		mismatchedTimeseries.Equal(emptyTimeseries)
 	})
 
-	assertPanic(t, "timeseries: Xs and Ys length mismatch", func() {
+	assertPanic(t, "timeseries: Xs and Ys slice length mismatch", func() {
 		emptyTimeseries.Equal(mismatchedTimeseries)
 	})
 

@@ -53,7 +53,7 @@ func (t Timeseries) At(i int) (x, y float64) {
 // Equal - Return true if t and other represent the same time series
 func (t Timeseries) Equal(other Timeseries) bool {
 	if len(t.Xs) != len(t.Ys) || len(other.Xs) != len(other.Ys) {
-		panic("timeseries: Xs and Ys length mismatch")
+		panic("timeseries: Xs and Ys slice length mismatch")
 	}
 
 	if t.Len() != other.Len() {
