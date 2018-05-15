@@ -14,6 +14,10 @@ var minX = math.Inf(-1)
 var maxX = math.Inf(1)
 
 func TestAppend(t *testing.T) {
+	assertPanic(t, "timeseries: Xs and Ys slice length mismatch", func() {
+		mismatchedTimeseries.Append(0, 0)
+	})
+
 	expected := Timeseries{
 		Xs: []float64{1, 2},
 		Ys: []float64{123.4, 456.7},
