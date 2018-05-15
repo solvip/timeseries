@@ -187,6 +187,10 @@ func TestDifference(t *testing.T) {
 }
 
 func TestLinearRegression(t *testing.T) {
+	assertPanic(t, "timeseries: Xs and Ys slice length mismatch", func() {
+		mismatchedTimeseries.LinearRegression()
+	})
+
 	// Ensure that a diagonal results in a perfect fit
 	ts1 := Timeseries{
 		Xs: []float64{0, 1, 2, 3, 4, 5},
