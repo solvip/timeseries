@@ -73,7 +73,7 @@ func (t Timeseries) Equal(other Timeseries) bool {
 // The series must be sorted.
 func (t Timeseries) After(x float64) Timeseries {
 	if len(t.Xs) != len(t.Ys) {
-		panic("timeseries: Xs and Ys length mismatch")
+		panic("timeseries: Xs and Ys slice length mismatch")
 	}
 
 	if i := t.findPivot(x); i == t.Len() {

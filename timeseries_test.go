@@ -67,6 +67,10 @@ func TestEqual(t *testing.T) {
 }
 
 func TestAfter(t *testing.T) {
+	assertPanic(t, "timeseries: Xs and Ys slice length mismatch", func() {
+		mismatchedTimeseries.After(0)
+	})
+
 	ts := Timeseries{
 		Xs: []float64{1, 2, 3},
 		Ys: []float64{100.0, 50.0, 100.0},
