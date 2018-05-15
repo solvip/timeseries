@@ -28,6 +28,37 @@ func TestAppend(t *testing.T) {
 	}
 }
 
+func TestEqual(t *testing.T) {
+	assertPanic(t, "timeseries: Xs and Ys length mismatch", func() {
+		mismatchedTimeseries.Equal(emptyTimeseries)
+	})
+
+	assertPanic(t, "timeseries: Xs and Ys length mismatch", func() {
+		emptyTimeseries.Equal(mismatchedTimeseries)
+	})
+
+	if !emptyTimeseries.Equal(emptyTimeseries) {
+		t.Fatalf("expected emptyTimeseries to be equal to emptyTimeseries")
+	}
+
+	var ts1, ts2 Timeseries
+	ts1.Append(1, 2)
+	ts2.Append(1, 2)
+
+	if !ts1.Equal(ts2) {
+		t.Fatalf("expected ts1 to be equal to ts2")
+	}
+
+	if !ts2.Equal(ts1) {
+		t.Fatalf("expected ts2 to be equal to ts1")
+	}
+
+	ts1.Append(3, 4)
+	if ts1.Equal(ts2) {
+		t.Fatalf("ts1 should not be equal to ts2")
+	}
+}
+
 func TestAfter(t *testing.T) {
 	ts := Timeseries{
 		Xs: []float64{1, 2, 3},
