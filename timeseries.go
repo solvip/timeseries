@@ -159,12 +159,24 @@ func (t Timeseries) Difference() (ret Timeseries) {
 //  y = alpha + beta*x
 // such that rmse is minimized
 func (t Timeseries) LinearRegression() (alpha, beta, rmse float64) {
+	return t.WeightedLinearRegression(nil)
+}
+
+// WeightedLinearRegression performs a weighted linear regression of the
+// series computing the best fit line
+//  y = alpha + beta*x
+// such that rmse is minimized
+func (t Timeseries) WeightedLinearRegression(weights []float64) (alpha, beta, rmse float64) {
 	if len(t.Xs) != len(t.Ys) {
 		panic("timeseries: Xs and Ys slice length mismatch")
 	}
 
-	alpha, beta = stat.LinearRegression(t.Xs, t.Ys, nil, false)
-	rmse = math.Sqrt(meanSquaredError(t.Xs, t.Ys, nil, alpha, beta))
+	if weights != nil && len(t.Xs) != len(weights) {
+		panic("timeseries: Xs, Ys and weights slice length mismatch")
+	}
+
+	alpha, beta = stat.LinearRegression(t.Xs, t.Ys, weights, false)
+	rmse = math.Sqrt(meanSquaredError(t.Xs, t.Ys, weights, alpha, beta))
 
 	return alpha, beta, rmse
 }
